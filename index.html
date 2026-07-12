@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Weekly · AgenticCoding 实验室</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --tag-bg: #1f2937;
+    --tag-text: #58a6ff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .container { max-width: 800px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  header {
+    text-align: center;
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  header p { color: var(--muted); font-size: 0.95rem; }
+  header .badge {
+    display: inline-block;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+  }
+
+  .issue-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .issue-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .issue-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  .issue-card .meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .issue-card .meta .issue-number { color: var(--muted); }
+  .issue-card .meta .date { color: var(--muted); }
+  .issue-card .title { font-size: 1.1rem; font-weight: 600; color: var(--accent); }
+  .issue-card .summary { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+  .issue-card .arrow { float: right; color: var(--muted); transition: transform 0.2s; }
+  .issue-card.expanded .arrow { transform: rotate(90deg); }
+
+  .issue-body {
+    display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .issue-card.expanded .issue-body { display: block; }
+
+  .issue-body h1, .issue-body h2, .issue-body h3 {
+    margin: 1em 0 0.5em;
+    color: #f0f6fc;
+  }
+  .issue-body h1 { font-size: 1.3rem; }
+  .issue-body h2 { font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  .issue-body h3 { font-size: 1rem; }
+  .issue-body p { margin: 0.5em 0; }
+  .issue-body a { color: var(--accent); }
+  .issue-body code {
+    background: var(--tag-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  .issue-body pre {
+    background: var(--tag-bg);
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+  .issue-body pre code { background: none; padding: 0; }
+  .issue-body ul, .issue-body ol { padding-left: 24px; margin: 8px 0; }
+  .issue-body li { margin: 4px 0; }
+  .issue-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding-left: 16px;
+    color: var(--muted);
+    margin: 12px 0;
+  }
+  .issue-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+    font-size: 0.9rem;
+  }
+  .issue-body th, .issue-body td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .issue-body th { background: var(--tag-bg); }
+  .issue-body hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .issue-body strong { color: #f0f6fc; }
+  .issue-body img { max-width: 100%; border-radius: 6px; }
+
+  .loading {
+    text-align: center;
+    padding: 60px;
+    color: var(--muted);
+  }
+  .loading .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty { text-align: center; padding: 60px; color: var(--muted); }
+  .error { text-align: center; padding: 60px; color: #f85149; }
+
+  footer {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px 14px; }
+    header { padding: 40px 0 24px; }
+    header h1 { font-size: 1.5rem; }
+    .issue-card { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>🤖 AI Weekly</h1>
+    <p>每周 AI Agent 热点，有观点、有信源、不骑墙</p>
+    <span class="badge">AgenticCoding 实验室出品</span>
+  </header>
+
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>加载周报中…</p>
+  </div>
+
+  <div id="issue-list" class="issue-list" style="display:none;"></div>
+  <div id="error" class="error" style="display:none;"></div>
+  <div id="empty" class="empty" style="display:none;">📭 暂无周报，敬请期待</div>
+
+  <footer>
+    <p>内容由 <a href="https://github.com/sleepy-zone/daily-report" target="_blank">GitHub Issues</a> 自动驱动 · 
+    <a href="https://agentic-coding-lab.github.io" target="_blank">AgenticCoding 实验室</a>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+const REPO = 'sleepy-zone/daily-report';
+const LABEL = 'weekly';
+
+function parseDateFromTitle(title) {
+  const match = title.match(/(\d{4}-\d{2}-\d{2})\s*[～~]\s*(\d{4}-\d{2}-\d{2})/);
+  if (match) return { start: match[1], end: match[2] };
+  const single = title.match(/(\d{4}-\d{2}-\d{2})/);
+  if (single) return { start: single[1], end: single[1] };
+  return null;
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
+
+async function loadIssues() {
+  const listEl = document.getElementById('issue-list');
+  const loadingEl = document.getElementById('loading');
+  const errorEl = document.getElementById('error');
+  const emptyEl = document.getElementById('empty');
+
+  try {
+    const url = `https://api.github.com/repos/${REPO}/issues?labels=${LABEL}&state=open&per_page=50&sort=created&direction=desc`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`GitHub API 返回 ${resp.status}`);
+
+    const issues = await resp.json();
+    loadingEl.style.display = 'none';
+
+    if (!issues.length) {
+      emptyEl.style.display = 'block';
+      return;
+    }
+
+    listEl.style.display = 'flex';
+
+    issues.forEach(issue => {
+      const dates = parseDateFromTitle(issue.title);
+      const displayDate = dates
+        ? `${dates.start} ～ ${dates.end}`
+        : formatDate(issue.created_at);
+
+      const card = document.createElement('div');
+      card.className = 'issue-card';
+
+      const cleanedBody = (issue.body || '')
+        .replace(/<!--[\s\S]*?-->/g, '')
+        .replace(/\[!NOTE\]/gi, '')
+        .trim();
+
+      const summary = cleanedBody
+        .replace(/#{1,6}\s/g, '')
+        .replace(/\*\*/g, '')
+        .replace(/\n{2,}/g, '\n')
+        .split('\n')
+        .filter(l => l.trim().length > 20)
+        .slice(0, 3)
+        .join(' · ')
+        .substring(0, 150);
+
+      card.innerHTML = `
+        <span class="arrow">▶</span>
+        <div class="meta">
+          <span class="issue-number">#${issue.number}</span>
+          <span class="date">${displayDate}</span>
+        </div>
+        <div class="title">${escapeHtml(issue.title)}</div>
+        ${summary ? `<div class="summary">${escapeHtml(summary)}…</div>` : ''}
+        <div class="issue-body">
+          ${marked.parse(cleanedBody)}
+        </div>
+      `;
+
+      card.addEventListener('click', function(e) {
+        const old = document.querySelector('.issue-card.expanded');
+        if (old && old !== card) old.classList.remove('expanded');
+        card.classList.toggle('expanded');
+      });
+
+      listEl.appendChild(card);
+    });
+
+  } catch (err) {
+    loadingEl.style.display = 'none';
+    errorEl.style.display = 'block';
+    errorEl.textContent = '⚠️ 加载失败：' + err.message + '。请稍后刷新重试。';
+    console.error(err);
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+loadIssues();
+</script>
+</body>
+</html>

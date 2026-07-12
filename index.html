@@ -59,15 +59,9 @@
     box-shadow: 0 0 0 1px var(--accent);
   }
   .issue-card .meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 6px;
-    font-size: 0.85rem;
-    color: var(--muted);
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px; font-size: 0.85rem; color: var(--muted);
   }
-  .issue-card .meta .issue-number { color: var(--muted); }
-  .issue-card .meta .date { color: var(--muted); }
   .issue-card .title { font-size: 1.1rem; font-weight: 600; color: var(--accent); }
   .issue-card .summary { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
   .issue-card .arrow { float: right; color: var(--muted); transition: transform 0.2s; }
@@ -82,64 +76,36 @@
   .issue-card.expanded .issue-body { display: block; }
 
   .issue-body h1, .issue-body h2, .issue-body h3 {
-    margin: 1em 0 0.5em;
-    color: #f0f6fc;
+    margin: 1em 0 0.5em; color: #f0f6fc;
   }
   .issue-body h1 { font-size: 1.3rem; }
   .issue-body h2 { font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
   .issue-body h3 { font-size: 1rem; }
   .issue-body p { margin: 0.5em 0; }
   .issue-body a { color: var(--accent); }
-  .issue-body code {
-    background: var(--tag-bg);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.9em;
-  }
-  .issue-body pre {
-    background: var(--tag-bg);
-    padding: 16px;
-    border-radius: 6px;
-    overflow-x: auto;
-    margin: 12px 0;
-  }
+  .issue-body code { background: var(--tag-bg); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  .issue-body pre { background: var(--tag-bg); padding: 16px; border-radius: 6px; overflow-x: auto; margin: 12px 0; }
   .issue-body pre code { background: none; padding: 0; }
   .issue-body ul, .issue-body ol { padding-left: 24px; margin: 8px 0; }
   .issue-body li { margin: 4px 0; }
   .issue-body blockquote {
-    border-left: 3px solid var(--accent);
-    padding-left: 16px;
-    color: var(--muted);
-    margin: 12px 0;
+    border-left: 3px solid var(--accent); padding-left: 16px;
+    color: var(--muted); margin: 12px 0;
   }
-  .issue-body table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 12px 0;
-    font-size: 0.9rem;
-  }
-  .issue-body th, .issue-body td {
-    border: 1px solid var(--border);
-    padding: 8px 12px;
-    text-align: left;
-  }
+  .issue-body table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.9rem; }
+  .issue-body th, .issue-body td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
   .issue-body th { background: var(--tag-bg); }
   .issue-body hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
   .issue-body strong { color: #f0f6fc; }
   .issue-body img { max-width: 100%; border-radius: 6px; }
 
   .loading {
-    text-align: center;
-    padding: 60px;
-    color: var(--muted);
+    text-align: center; padding: 60px; color: var(--muted);
   }
   .loading .spinner {
-    width: 32px;
-    height: 32px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    width: 32px; height: 32px;
+    border: 3px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
     margin: 0 auto 16px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -148,12 +114,8 @@
   .error { text-align: center; padding: 60px; color: #f85149; }
 
   footer {
-    text-align: center;
-    padding: 40px 0;
-    color: var(--muted);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--border);
-    margin-top: 40px;
+    text-align: center; padding: 40px 0; color: var(--muted);
+    font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 40px;
   }
   footer a { color: var(--accent); text-decoration: none; }
 
@@ -184,7 +146,7 @@
   <div id="empty" class="empty" style="display:none;">📭 暂无周报，敬请期待</div>
 
   <footer>
-    <p>内容由 <a href="https://github.com/sleepy-zone/daily-report" target="_blank">GitHub Issues</a> 自动驱动 · 
+    <p>内容由 <a href="https://github.com/sleepy-zone/daily-report" target="_blank">GitHub Issues</a> 驱动 · 静态 JSON，零 API 调用 · 
     <a href="https://agentic-coding-lab.github.io" target="_blank">AgenticCoding 实验室</a>
     </p>
   </footer>
@@ -192,23 +154,6 @@
 </div>
 
 <script>
-const REPO = 'sleepy-zone/daily-report';
-const LABEL = 'weekly';
-
-function parseDateFromTitle(title) {
-  const match = title.match(/(\d{4}-\d{2}-\d{2})\s*[～~]\s*(\d{4}-\d{2}-\d{2})/);
-  if (match) return { start: match[1], end: match[2] };
-  const single = title.match(/(\d{4}-\d{2}-\d{2})/);
-  if (single) return { start: single[1], end: single[1] };
-  return null;
-}
-
-function formatDate(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
-}
-
 async function loadIssues() {
   const listEl = document.getElementById('issue-list');
   const loadingEl = document.getElementById('loading');
@@ -216,43 +161,26 @@ async function loadIssues() {
   const emptyEl = document.getElementById('empty');
 
   try {
-    const url = `https://api.github.com/repos/${REPO}/issues?labels=${LABEL}&state=open&per_page=50&sort=created&direction=desc`;
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`GitHub API 返回 ${resp.status}`);
+    const resp = await fetch('data/weekly.json');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
 
-    const issues = await resp.json();
     loadingEl.style.display = 'none';
 
-    if (!issues.length) {
+    if (!data.issues || !data.issues.length) {
       emptyEl.style.display = 'block';
       return;
     }
 
     listEl.style.display = 'flex';
 
-    issues.forEach(issue => {
-      const dates = parseDateFromTitle(issue.title);
-      const displayDate = dates
-        ? `${dates.start} ～ ${dates.end}`
-        : formatDate(issue.created_at);
+    data.issues.forEach(issue => {
+      const displayDate = issue.date_start && issue.date_end
+        ? `${issue.date_start} ～ ${issue.date_end}`
+        : '';
 
       const card = document.createElement('div');
       card.className = 'issue-card';
-
-      const cleanedBody = (issue.body || '')
-        .replace(/<!--[\s\S]*?-->/g, '')
-        .replace(/\[!NOTE\]/gi, '')
-        .trim();
-
-      const summary = cleanedBody
-        .replace(/#{1,6}\s/g, '')
-        .replace(/\*\*/g, '')
-        .replace(/\n{2,}/g, '\n')
-        .split('\n')
-        .filter(l => l.trim().length > 20)
-        .slice(0, 3)
-        .join(' · ')
-        .substring(0, 150);
 
       card.innerHTML = `
         <span class="arrow">▶</span>
@@ -261,9 +189,10 @@ async function loadIssues() {
           <span class="date">${displayDate}</span>
         </div>
         <div class="title">${escapeHtml(issue.title)}</div>
-        ${summary ? `<div class="summary">${escapeHtml(summary)}…</div>` : ''}
+        ${issue.summary ? `<div class="summary">${escapeHtml(issue.summary)}</div>` : ''}
         <div class="issue-body">
-          ${marked.parse(cleanedBody)}
+          ${marked.parse(issue.body || '')}
+          <p style="margin-top:16px;"><a href="${issue.url}" target="_blank">在 GitHub 查看原文 →</a></p>
         </div>
       `;
 
